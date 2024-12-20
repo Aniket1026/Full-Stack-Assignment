@@ -3,13 +3,17 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-export async function Get() {
+export async function GET(req: Request) {
   try {
     const students = await prisma.student.findMany();
     return NextResponse.json(students);
   } catch (error: any) {
-    console.log("Error in fetching students", error.message);
-    throw error.message;
+    console.error("Failed to fetch students:", error);
+
+    return NextResponse.json(
+      { error: "Failed to fetch students" },
+      { status: 500 }
+    );
   }
 }
 
@@ -25,7 +29,10 @@ export async function POST(req: Request) {
     });
     return NextResponse.json(student);
   } catch (error: any) {
-    console.log("Error in new student creation : ", error.message);
-    throw error.message;
+    console.error("Failed to create student:", error);
+    return NextResponse.json(
+      { error: "Failed to create student" },
+      { status: 500 }
+    );
   }
 }
